@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.EqualsExclude;
 
 @Entity
 @Table(name = "planets")
@@ -24,4 +26,8 @@ public class Planet {
         this.terrain = terrain;
     }
 
+    @Override
+    public boolean equals(Object obj){
+        return EqualsBuilder.reflectionEquals(obj, this);
+    }
 }
