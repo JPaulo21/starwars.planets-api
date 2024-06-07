@@ -6,15 +6,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Example;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static com.jp.tests.api.starwars.planets.common.PlanetConstants.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 //@SpringBootTest // Montar o contexto de aplicação do spring, ou seja todas as classes, para injetar as dependencias nas classes de testes
@@ -90,6 +94,30 @@ public class PlanetServiceTest {
         when(planetRepository.findByName(name)).thenReturn(Optional.empty());
 
         Optional<Planet> sut = planetService.getByName(name);
+
+        assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void listPlanets_ReturnAllPlanets(){
+        List<Planet> planets = new ArrayList<>(){{
+           add(PLANET);
+        }};
+        Example<Planet> query = QueryBuilder.makeQuery(Planet.builder().climate(PLANET.getClimate()).terrain(PLANET.getTerrain()).build());
+        when(planetRepository.findAll(query)).thenReturn(planets);
+
+        List<Planet> sut = planetService.list(PLANET.getTerrain(),PLANET.getClimate());
+
+        assertThat(sut).isNotEmpty();
+        assertThat(sut).hasSize(1);
+        assertThat(sut.get(0)).isEqualTo(PLANET);
+    }
+
+    @Test
+    public void listPlanets_ReturnNoPlanets(){
+        when(planetRepository.findAll((Example<Planet>) any())).thenReturn(Collections.emptyList());
+
+        List<Planet> sut = planetService.list(PLANET.getTerrain(),PLANET.getClimate());
 
         assertThat(sut).isEmpty();
     }
