@@ -122,4 +122,14 @@ public class PlanetServiceTest {
         assertThat(sut).isEmpty();
     }
 
+    @Test
+    public void removePlanet_WithExistingId_doesNotThrowAnyException(){
+        //TODO - implement test
+    }
+
+    @Test
+    public void removePlanet_WithUnexistingId_ThrowsException(){
+        //TODO - implement test
+    }
+
 }
