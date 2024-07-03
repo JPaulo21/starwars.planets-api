@@ -17,6 +17,7 @@ import java.util.Optional;
 import static com.jp.tests.api.starwars.planets.common.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 
@@ -124,12 +125,14 @@ public class PlanetServiceTest {
 
     @Test
     public void removePlanet_WithExistingId_doesNotThrowAnyException(){
-        //TODO - implement test
+        assertThatCode(() -> planetRepository.deleteById(anyLong())).doesNotThrowAnyException();
     }
 
     @Test
     public void removePlanet_WithUnexistingId_ThrowsException(){
-        //TODO - implement test
+        doThrow(new RuntimeException()).when(planetRepository).deleteById(anyLong());
+
+        assertThatThrownBy(() -> planetService.remove(anyLong())).isInstanceOf(RuntimeException.class);
     }
 
 }
