@@ -32,4 +32,24 @@ public class PlanetRepositoryTest {
         assertThat(sut.getTerrain()).isEqualTo(PLANET.getTerrain());
     }
 
+    @Test
+    public void createPlanet_WithInvalidData_ThrowsException(){
+        Planet emptyPlanet = new Planet();
+        Planet invalidPlanet = new Planet("","","");
+
+        assertThatThrownBy(() -> planetRepository.save(emptyPlanet)).isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> planetRepository.save(invalidPlanet)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    public void createPlanet_WithExistingName_ThorwsException(){
+        Planet planet = testEntityManager.persistFlushFind(PLANET); //Salve no banco e consulta o mesmo
+        /* Disclaimer: O testEntityManager fica monitorando o objeto planet, então o setId para null terá efeito,
+                        pois o método sabe também faz atualização do objeto caso o id esteja preenchido */
+        testEntityManager.detach(planet); // Desassocia o objeto da sessão do testEntityManager
+        planet.setId(null);
+
+        assertThatThrownBy(() ->  planetRepository.save(planet)).isInstanceOf(RuntimeException.class);
+    }
+
 }
