@@ -125,11 +125,13 @@ public class PlanetServiceTest {
 
     @Test
     public void removePlanet_WithExistingId_doesNotThrowAnyException(){
+        // o código não lança nenhuma exception
         assertThatCode(() -> planetRepository.deleteById(anyLong())).doesNotThrowAnyException();
     }
 
     @Test
     public void removePlanet_WithUnexistingId_ThrowsException(){
+        // doThrow está sendo usando por o método deleteById retorna void, então estamos dizendo o tipo de retorno, nesse caso uma exception
         doThrow(new RuntimeException()).when(planetRepository).deleteById(anyLong());
 
         assertThatThrownBy(() -> planetService.remove(anyLong())).isInstanceOf(RuntimeException.class);
