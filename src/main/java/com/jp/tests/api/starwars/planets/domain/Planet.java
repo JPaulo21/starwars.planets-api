@@ -1,6 +1,7 @@
 package com.jp.tests.api.starwars.planets.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +19,17 @@ public class Planet {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @NotBlank
+    @Column(nullable = false)
     private String climate;
+
+    @NotBlank
+    @Column(nullable = false)
     private String terrain;
 
     public Planet(String name, String climate, String terrain){
