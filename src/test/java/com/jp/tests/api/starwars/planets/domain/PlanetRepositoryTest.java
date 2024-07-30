@@ -52,4 +52,13 @@ public class PlanetRepositoryTest {
         assertThatThrownBy(() ->  planetRepository.save(planet)).isInstanceOf(RuntimeException.class);
     }
 
+    @Test
+    public void getPlanet_ByExistingId_ReturnsPlanet() throws Exception {
+        //TODO implement
+    }
+
+    @Test
+    public void getPlanet_ByUnexistingId_ReturnsEmpty() throws Exception {
+        //TODO implement
+    }
 }
