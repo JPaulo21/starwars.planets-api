@@ -2,10 +2,15 @@ package com.jp.tests.api.starwars.planets.domain;
 
 import static com.jp.tests.api.starwars.planets.common.PlanetConstants.PLANET;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.util.Optional;
 
 @DataJpaTest // Cria e usa um banco em memória H2 para os testes,
 // Necessário ter o H2 como dependência
@@ -17,6 +22,11 @@ public class PlanetRepositoryTest {
 
     @Autowired
     private TestEntityManager testEntityManager;
+
+    @AfterEach // Método é executa a cada TESTE
+    public void afterEach(){
+        PLANET.setId(null);
+    }
 
     @Test
     public void createPlanet_WithValidDate_ReturnsPlanet(){
@@ -54,11 +64,18 @@ public class PlanetRepositoryTest {
 
     @Test
     public void getPlanet_ByExistingId_ReturnsPlanet() throws Exception {
-        //TODO implement
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+
+        Optional<Planet> planetOpt = planetRepository.findById(planet.getId());
+
+        assertThat(planetOpt).isNotEmpty();
+        assertThat(planetOpt.get()).isEqualTo(planet);
     }
 
     @Test
     public void getPlanet_ByUnexistingId_ReturnsEmpty() throws Exception {
-        //TODO implement
+        Optional<Planet> planetOptional = planetRepository.findById(1L);
+
+        assertThat(planetOptional).isEmpty();
     }
 }

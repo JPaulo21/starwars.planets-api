@@ -81,7 +81,7 @@ public class PlanetControllerTest {
 
     @Test
     public void getPlanet_ByUnexistingId_ReturnsNoFound() throws Exception{
-        //TODO implement
+        //objeto não mockado
         mockMvc.perform(get("/planets/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
