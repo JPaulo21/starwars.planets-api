@@ -1,12 +1,13 @@
 package com.jp.tests.api.starwars.planets.web;
 
+import static com.jp.tests.api.starwars.planets.common.PlanetConstants.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static com.jp.tests.api.starwars.planets.common.PlanetConstants.PLANET;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jp.tests.api.starwars.planets.domain.Planet;
@@ -19,6 +20,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @WebMvcTest(PlanetController.class)
@@ -81,9 +84,56 @@ public class PlanetControllerTest {
 
     @Test
     public void getPlanet_ByUnexistingId_ReturnsNoFound() throws Exception{
-        //objeto não mockado
+        // função do objeto planetService não foi mockado
         mockMvc.perform(get("/planets/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void getPlanet_ByExistingName_ReturnsPlanet() throws Exception {
+        when(planetService.getByName(any())).thenReturn(Optional.of(PLANET));
+
+        mockMvc.perform(get("/planets/name/" + PLANET.getName())
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(PLANET));
+    }
+
+    @Test
+    public void getPlanet_ByUnexistingName_ReturnsNotFound() throws Exception {
+        when(planetService.getByName(any())).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/planets/name/name")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void listPlanets_ReturnsFilteredPlanets() throws Exception{
+        when(planetService.list(null, null)).thenReturn(PLANETS);
+        when(planetService.list(TATOOINE.getTerrain(), TATOOINE.getClimate())).thenReturn(List.of(TATOOINE));
+
+        mockMvc
+            .perform(get("/planets"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)));
+
+        mockMvc.perform(
+                    get("/planets?" + String.format("terrain=%s&climate=%s", TATOOINE.getTerrain(), TATOOINE.getClimate())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0]").value(TATOOINE));
+    }
+
+    @Test
+    public void listPlanets_ReturnsNoPlanets() throws Exception {
+        when(planetService.list(any(), any())).thenReturn(Collections.emptyList());
+
+        mockMvc
+            .perform(get("/planets"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
 }
