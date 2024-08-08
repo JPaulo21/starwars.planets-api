@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Example;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 //@SpringBootTest // Montar o contexto de aplicação do spring, ou seja todas as classes, para injetar as dependencias nas classes de testes
 //@SpringBootTest(classes = PlanetService.class) // Monta o contexto especifico para o PlanetService
 public class PlanetServiceTest {
