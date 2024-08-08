@@ -3,6 +3,7 @@ package com.jp.tests.api.starwars.planets.domain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +29,10 @@ public class PlanetService {
     }
 
     public List<Planet> list(String terrain, String climate) {
-        Example<Planet> query = QueryBuilder.makeQuery(Planet.builder().terrain(terrain).climate(climate).build());
-        return planetRepository.findAll(query);
+        Planet planet = Planet.builder().terrain(terrain).climate(climate).build();
+        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase().withIgnoreNullValues();
+        Example<Planet> planetQuery = Example.of(planet, exampleMatcher);
+        return planetRepository.findAll(planetQuery);
     }
 
     public void remove(Long id) {
