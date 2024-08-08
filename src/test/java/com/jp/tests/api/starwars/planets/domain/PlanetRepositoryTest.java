@@ -1,6 +1,7 @@
 package com.jp.tests.api.starwars.planets.domain;
 
 import static com.jp.tests.api.starwars.planets.common.PlanetConstants.PLANET;
+import static com.jp.tests.api.starwars.planets.common.PlanetConstants.TATOOINE;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -9,7 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.test.context.jdbc.Sql;
 
+import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest // Cria e usa um banco em memória H2 para os testes,
@@ -78,4 +83,22 @@ public class PlanetRepositoryTest {
 
         assertThat(planetOptional).isEmpty();
     }
+
+    @Test
+    public void getPlanet_ByExistingName_ReturnsPlanet(){
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+
+        Optional<Planet> planetOpt = planetRepository.findByName(planet.getName());
+
+        assertThat(planetOpt).isNotEmpty();
+        assertThat(planetOpt.get()).isEqualTo(planet);
+    }
+
+    @Test
+    public void getPlanet_ByExistingName_ReturnsNotFound(){
+        Optional<Planet> planetOpt = planetRepository.findByName("name");
+
+        assertThat(planetOpt).isEmpty();
+    }
+
 }
