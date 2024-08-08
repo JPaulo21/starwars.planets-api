@@ -101,4 +101,32 @@ public class PlanetRepositoryTest {
         assertThat(planetOpt).isEmpty();
     }
 
+    @Sql(scripts = "/import_planets.sql")
+    @Test
+    public void listPlanets_ReturnsFilteredPlanets(){
+        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase().withIgnoreNullValues();
+        Example<Planet> planetQueryWithoutFilters = Example.of(new Planet(), exampleMatcher); // Sem filtro
+        Example<Planet> planetQueryWithFilters = Example.of(new Planet(TATOOINE.getClimate(), TATOOINE.getTerrain()), exampleMatcher); // Com filtro
+
+        List<Planet> responseWithoutFilters = planetRepository.findAll(planetQueryWithoutFilters);
+        List<Planet> responseWithFilters = planetRepository.findAll(planetQueryWithFilters);
+
+        assertThat(responseWithoutFilters).isNotEmpty();
+        assertThat(responseWithoutFilters).hasSize(3);
+
+        assertThat(responseWithFilters).isNotEmpty();
+        assertThat(responseWithFilters).hasSize(1);
+        assertThat(responseWithFilters.get(0)).isEqualTo(TATOOINE);
+    }
+
+    @Test
+    public void listPlanets_ReturnsNoPlanets(){
+        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase().withIgnoreNullValues();
+        Example<Planet> planetQuery = Example.of(new Planet(), exampleMatcher);
+
+        List<Planet> response = planetRepository.findAll(planetQuery);
+
+        assertThat(response).isEmpty();
+    }
+
 }
