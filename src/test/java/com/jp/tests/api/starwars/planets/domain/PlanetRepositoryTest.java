@@ -3,7 +3,6 @@ package com.jp.tests.api.starwars.planets.domain;
 import static com.jp.tests.api.starwars.planets.common.PlanetConstants.PLANET;
 import static com.jp.tests.api.starwars.planets.common.PlanetConstants.TATOOINE;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -128,5 +127,20 @@ public class PlanetRepositoryTest {
 
         assertThat(response).isEmpty();
     }
+
+    @Test
+    public void removePlanet_WithExistingId_RemovesPlanetFromDatabase(){
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+
+        planetRepository.deleteById(planet.getId());
+
+        Planet removedPlanet = testEntityManager.find(Planet.class, planet.getId());
+        assertThat(removedPlanet).isNull();
+    }
+
+    //@Test
+    //public void removePlanet_WithUnexistingId_ThrowsException(){
+    //    assertThatThrownBy(() -> planetRepository.deleteById(99L)).isInstanceOf(PlanetNotFoundException.class);
+    //}
 
 }
