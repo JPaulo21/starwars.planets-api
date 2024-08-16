@@ -1,5 +1,6 @@
 package com.jp.tests.api.starwars.planets.web.exception;
 
+import com.jp.tests.api.starwars.planets.domain.exceptions.PlanetNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,12 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     private ResponseEntity<Object> handlerConflict(DataIntegrityViolationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(PlanetNotFoundException.class)
+    private ResponseEntity<Object> handlerPlanetNotFound(PlanetNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
 
