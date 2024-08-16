@@ -1,5 +1,6 @@
 package com.jp.tests.api.starwars.planets.domain;
 
+import com.jp.tests.api.starwars.planets.domain.exceptions.PlanetNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
@@ -36,6 +37,9 @@ public class PlanetService {
     }
 
     public void remove(Long id) {
+        if(!planetRepository.existsById(id))
+            new PlanetNotFoundException("Planet id="+id+" not exists");
+
         planetRepository.deleteById(id);
     }
 }
