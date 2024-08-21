@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("it")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // Monta o context real do spring
+@Sql(scripts = { "/import_planets.sql" }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = { "/remove_planets.sql" }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class PlanetIT {
 
@@ -38,6 +39,20 @@ public class PlanetIT {
         assertThat(sut.getTerrain()).isEqualTo(PLANET.getTerrain());
     }
 
+    @Test
+    public void getPlanet_ReturnsPlanet() {
+        Planet sut = webTestClient
+                .get()
+                .uri("/planets/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Planet.class)
+                .returnResult().getResponseBody();
 
+        assertThat(sut.getId()).isEqualTo(TATOOINE.getId());
+        assertThat(sut.getName()).isEqualTo(TATOOINE.getName());
+        assertThat(sut.getClimate()).isEqualTo(TATOOINE.getClimate());
+        assertThat(sut.getTerrain()).isEqualTo(TATOOINE.getTerrain());
+    }
 
 }
