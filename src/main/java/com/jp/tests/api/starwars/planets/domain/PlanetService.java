@@ -31,7 +31,8 @@ public class PlanetService {
 
     public List<Planet> list(String terrain, String climate) {
         Planet planet = Planet.builder().terrain(terrain).climate(climate).build();
-        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase().withIgnoreNullValues();
+        //ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase().withIgnoreNullValues();
+        ExampleMatcher exampleMatcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase().withIgnoreNullValues();
         Example<Planet> planetQuery = Example.of(planet, exampleMatcher);
         return planetRepository.findAll(planetQuery);
     }
