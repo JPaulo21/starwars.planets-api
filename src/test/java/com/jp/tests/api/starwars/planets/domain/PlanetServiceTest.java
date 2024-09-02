@@ -21,8 +21,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(SpringExtension.class)
+//@ContextConfiguration(classes = PlanetServiceTest.class)
 //@SpringBootTest // Montar o contexto de aplicação do spring, ou seja todas as classes, para injetar as dependencias nas classes de testes
 //@SpringBootTest(classes = PlanetService.class) // Monta o contexto especifico para o PlanetService
 public class PlanetServiceTest {
@@ -102,9 +102,7 @@ public class PlanetServiceTest {
 
     @Test
     public void listPlanets_ReturnAllPlanets(){
-        List<Planet> planets = new ArrayList<>(){{
-           add(PLANET);
-        }};
+        List<Planet> planets = List.of(PLANET);
         Example<Planet> query = QueryBuilder.makeQuery(Planet.builder().climate(PLANET.getClimate()).terrain(PLANET.getTerrain()).build());
         when(planetRepository.findAll(query)).thenReturn(planets);
 
