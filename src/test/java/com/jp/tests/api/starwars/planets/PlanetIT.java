@@ -9,6 +9,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.util.List;
+
 import static com.jp.tests.api.starwars.planets.common.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,6 +55,60 @@ public class PlanetIT {
         assertThat(sut.getName()).isEqualTo(TATOOINE.getName());
         assertThat(sut.getClimate()).isEqualTo(TATOOINE.getClimate());
         assertThat(sut.getTerrain()).isEqualTo(TATOOINE.getTerrain());
+    }
+
+    @Test
+    public void getPlanetByName_ReturnsPlanet(){
+        Planet sut = webTestClient
+                .get()
+                .uri("/planets/name/Tatooine")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Planet.class)
+                .returnResult().getResponseBody();
+
+        assertThat(sut.getName()).isEqualTo(TATOOINE.getName());
+    }
+
+    @Test
+    public void listPlanets_ReturnsAllPlanets(){
+        List<Planet> sut = webTestClient
+                .get()
+                .uri("/planets")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(Planet.class)
+                .returnResult().getResponseBody();
+
+        assertThat(sut.size()).isEqualTo(3);
+    }
+
+    @Test
+    public void listPlanets_byClimate_ReturnsPlanets(){
+        List<Planet> sut = webTestClient
+                .get()
+                .uri("/planets?climate=temperate")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(Planet.class)
+                .returnResult().getResponseBody();
+
+        assertThat(sut.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void listPlanets_ByTerrain_ReturnsPlanets(){
+        List<Planet> sut = webTestClient
+                .get()
+                .uri("/planets?terrain=" + TATOOINE.getTerrain())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(Planet.class)
+                .returnResult().getResponseBody();
+
+        assertThat(sut).isNotNull();
+        assertThat(sut.size()).isEqualTo(1);
+        assertThat(sut.get(0).getTerrain()).isEqualTo(TATOOINE.getTerrain());
     }
 
 }
