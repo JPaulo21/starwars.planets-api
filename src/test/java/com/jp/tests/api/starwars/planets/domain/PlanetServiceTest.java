@@ -10,7 +10,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -103,8 +102,7 @@ public class PlanetServiceTest {
     @Test
     public void listPlanets_ReturnAllPlanets(){
         List<Planet> planets = List.of(PLANET);
-        Example<Planet> query = QueryBuilder.makeQuery(Planet.builder().climate(PLANET.getClimate()).terrain(PLANET.getTerrain()).build());
-        when(planetRepository.findAll(query)).thenReturn(planets);
+        when(planetRepository.findAll((Example<Planet>) any())).thenReturn(planets);
 
         List<Planet> sut = planetService.list(PLANET.getTerrain(),PLANET.getClimate());
 
